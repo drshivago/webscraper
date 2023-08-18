@@ -6,14 +6,14 @@ import os
 import timedecorator
 
 link = "https://worldcosplay.net/photo/"
-home = "/Users/peterfile/miniprograms/photos/"
+home = "/Users/peterfile/Documents/webscraper/photos"
 
 with open('place.txt','r') as place:
     num = int(place.readline())
     file_num = int(place.readline())
     photo_saves = int(place.readline())
 
-round = 1000                #number of download rounds per program run
+round = 100                #number of download rounds per program run
 set = 100                   #number of download atempts per round
 retry = 0                   #don't fail twice
 per_folder = 50050          #~number of photos saved per folder
@@ -38,6 +38,8 @@ for i in range(0, round):
                     continue
                 res = session.get(pics["content"], stream = True, timeout = 60)
                 pics_name = pics["content"].split('/')[-1]
+                if pics_name == "ogp_new.png":
+                    continue
 
                 with open(os.path.join(path, pics_name), 'wb') as f:                    #Save file
                     shutil.copyfileobj(res.raw, f)
@@ -48,7 +50,9 @@ for i in range(0, round):
             else:
                 print("/",end="")
                 if r.status_code != 404:
-                    print(sauce + ' ',  r.status_code, ' ' + r.reason, file=open(os.path.join(path, "log.txt"), 'a'))
+                    print(r.status_code, r.reason)
+                    print(sauce,  r.status_code, r.reason, file=open(os.path.join(path, "log.txt"), 'a'))
+                    time.sleep(60)
 
         except Exception as e:
             print("\ncannot work " + sauce)
@@ -68,8 +72,6 @@ for i in range(0, round):
                 num -= 1
                 time.sleep(1800)
                 continue
-    #r.close()
-    #res.close()
 
     num += set
     if photo_saves >= per_folder:                                               #make new folder, use that
@@ -77,7 +79,7 @@ for i in range(0, round):
         file_num += 1
         path = os.path.join(home, str(file_num))
         os.mkdir(path)
-        print("Download Log:", file=open(os.path.join(path, "log.txt"), 'w+'))
+        print("Download Log", str(file_num), file=open(os.path.join(path, "log.txt"), 'w+'))
         print("Making new folder")
         photo_saves = 0
 
