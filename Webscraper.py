@@ -5,6 +5,12 @@ import time
 import os
 import timedecorator
 
+def saver(num, file_num, photo_saves):
+    with open('place.txt', 'w') as place:                           #save progress
+        place.write(str(num) + '\n')
+        place.write(str(file_num) + '\n')
+        place.write(str(photo_saves))
+
 link = "https://worldcosplay.net/photo/"
 home = "/Users/peterfile/Documents/webscraper/photos"
 
@@ -13,11 +19,11 @@ with open('place.txt','r') as place:
     file_num = int(place.readline())
     photo_saves = int(place.readline())
 
-round = 100                #number of download rounds per program run
+round = 1000                #number of download rounds per program run
 set = 100                   #number of download atempts per round
 retry = 0                   #don't fail twice
 per_folder = 50050          #~number of photos saved per folder
-sleep_time = 5
+sleep_time = 10
 timer = time.time()
 session = requests.Session()
 path = os.path.join(home, str(file_num))
@@ -52,17 +58,18 @@ for i in range(0, round):
                 if r.status_code != 404:
                     print(r.status_code, r.reason)
                     print(sauce,  r.status_code, r.reason, file=open(os.path.join(path, "log.txt"), 'a'))
-                    time.sleep(60)
+                    if r.status_code == 429:
+                        saver(num, file_num, photo_saves)
+                        time.sleep(3600)
+                    else:
+                        time.sleep(60)
 
         except Exception as e:
             print("\ncannot work " + sauce)
             print(f"Exception occured: {e}")
 
             if retry == num + j:
-                with open('place.txt', 'w') as place:                           #failed 2 in row, save progress and quit
-                    place.write(str(num) + '\n')
-                    place.write(str(file_num) + '\n')
-                    place.write(str(photo_saves))
+                saver(num, file_num, photo_saves)
                 print("\a", "\a", "\a",)
                 print("failed at: ", timedecorator.time(int(time.time() - timer)))
                 exit()
@@ -83,12 +90,11 @@ for i in range(0, round):
         print("Making new folder")
         photo_saves = 0
 
-    with open('place.txt', 'w') as place:                                       #save progress
-        place.write(str(num) + '\n')
-        place.write(str(file_num) + '\n')
-        place.write(str(photo_saves))
+    saver(num, file_num, photo_saves)
     print()
     print("Finished round: ", i+1)
+    res.close()
+    r.close()
     time.sleep(sleep_time)
 
 print("time to pop champain!")                                                  #some how finised without error

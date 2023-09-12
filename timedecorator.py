@@ -14,9 +14,8 @@ def time(time_date):
     time_date, minutes = divider(time_date, 60)
     days, hours = divider(time_date, 24)
 
-    return "Time elapsed: " + str(days) + " days " + str(hours) + " hours " +\
-        str(minutes) + " minutes " + str(seconds) + " seconds "
+    return "Time elapsed:", days, "days", hours, "hours", minutes, "minutes", seconds, "seconds"
 
-#test items
-#num = 122333333
+#testing
+#num = 152343734
 #print(time(num))
