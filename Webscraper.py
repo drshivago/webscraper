@@ -19,15 +19,17 @@ with open('place.txt','r') as place:
     file_num = int(place.readline())
     photo_saves = int(place.readline())
 
-round = 10000                #number of download rounds per program run
-set = 100                   #number of download atempts per round
-retry = 0                   #don't fail twice
-per_folder = 50050          #~number of photos saved per folder
-sleep_time = 120
+round = 10000                   #number of download rounds per program run
+set = 100                       #number of download atempts per round
+retry = 0                       #don't fail twice
+per_folder = 50000              #~number of photos saved per folder
+sleep_time = 120                #must be 120 to not 429
 session = requests.Session()
 timer = time.time()
 path = os.path.join(home, str(file_num))
 
+if not os.path.isdir(path):
+    os.mkdir(path)
 
 for i in range(0, round):
 
