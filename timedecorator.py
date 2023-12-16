@@ -14,7 +14,7 @@ def time(time_date):
     time_date, minutes = divider(time_date, 60)
     days, hours = divider(time_date, 24)
 
-    return "Time elapsed:", days, "days", hours, "hours", minutes, "minutes", seconds, "seconds"
+    return "Time elapsed: {0} days, {1} hours, {2} minutes, {3} seconds".format(days, hours, minutes, seconds)
 
 #testing
 #num = 152343734

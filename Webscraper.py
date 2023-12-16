@@ -19,13 +19,13 @@ with open('place.txt','r') as place:
     file_num = int(place.readline())
     photo_saves = int(place.readline())
 
-round = 1000                #number of download rounds per program run
+round = 10000                #number of download rounds per program run
 set = 100                   #number of download atempts per round
 retry = 0                   #don't fail twice
 per_folder = 50050          #~number of photos saved per folder
-sleep_time = 10
-timer = time.time()
+sleep_time = 120
 session = requests.Session()
+timer = time.time()
 path = os.path.join(home, str(file_num))
 
 for i in range(0, round):
@@ -60,9 +60,9 @@ for i in range(0, round):
                     print(sauce,  r.status_code, r.reason, file=open(os.path.join(path, "log.txt"), 'a'))
                     if r.status_code == 429:
                         saver(num, file_num, photo_saves)
-                        time.sleep(3600)
+                        time.sleep(3200)
                     else:
-                        time.sleep(60)
+                        time.sleep(120)
 
         except Exception as e:
             print("\ncannot work " + sauce)
@@ -86,17 +86,16 @@ for i in range(0, round):
         file_num += 1
         path = os.path.join(home, str(file_num))
         os.mkdir(path)
-        print("Download Log", str(file_num), file=open(os.path.join(path, "log.txt"), 'w+'))
+        print("Download Log " + str(file_num), file=open(os.path.join(path, "log.txt"), 'w+'))
         print("Making new folder")
         photo_saves = 0
 
     saver(num, file_num, photo_saves)
     print()
     print("Finished round: ", i+1)
-    res.close()
-    r.close()
     time.sleep(sleep_time)
 
+session.close()
 print("time to pop champain!")                                                  #some how finised without error
 print(timedecorator.time(int(time.time() - timer)))
 print("\a")
